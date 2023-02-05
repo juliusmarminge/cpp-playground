@@ -10,14 +10,12 @@
 # make lint                  : Use a 'linter' to check for common mistakes in your code.
 # -----------------------------------------------------------------------------
 
-INFO_ENVIRONMENT="MacOS"
 CC=clang
 CXX=clang
 ASAN_EXPORT="symbolize=1 ASAN_SYMBOLIZER_PATH=$(shell which llvm-symbolizer)"
-CFLAGS=-x c++ -c -Wall  -Wpedantic -Werror -std=c++17 $(INC_PARAMS) -O1
-LDFLAGS=-lstdc++ -lm $(MC_FLAGS)
-LINTER=clang-tidy
-
+CFLAGS=-x c++ -c -Wall  -Wpedantic -Werror -std=c++17 $(INC_PARAMS) -O2
+LDFLAGS=-lstdc++ -lm
+LINTER=cpplint
 
 INCLUDE_DIRS= src/include
 INC_PARAMS=$(foreach d, $(INCLUDE_DIRS), -I$d)
@@ -30,6 +28,10 @@ APP_OBJECTS=$(APP_SRC:.cc=.o)
 APP_EXECUTABLE=app
 
 all: clean $(SRC) $(APP_SRC) $(APP_EXECUTABLE)
+
+run: all
+	@echo "Running app"
+	@./$(APP_EXECUTABLE)
 
 .PHONY: build-app
 build-app: clean $(SRC) $(APP_SRC) $(APP_EXECUTABLE)
@@ -52,4 +54,4 @@ clean:
 
 .PHONY: lint
 lint:
-	$(LINTER) --header-filter=".*.hpp" --warnings-as-errors='*' --checks="cppcoreguidelines-*, bugprone*, diagnostic-*, -clang-diagnostic-c++17-extensions, analyzer-*, readability-*, -cppcoreguidelines-pro-bounds-pointer-arithmetic, -cppcoreguidelines-special-member-functions, -cppcoreguidelines-owning-memory" ${SRC} ${APP_SRC} -- ${INC_PARAMS}
+	$(LINTER) ${SRC} ${APP_SRC}
