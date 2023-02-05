@@ -6,6 +6,11 @@
 int main()
 {
     Vector<int> vector;
-    std::cout << "Hello world" << std::endl;
+    for (int i = 0; i < 100; i++)
+        vector.push_back(i * 2);
+
+    std::cout << "Size    : " << vector.size() << std::endl;
+    std::cout << "Cap     : " << vector.capacity() << std::endl;
+    std::cout << "Vec[10] : " << vector.at(10) << std::endl;
     return 0;
 }
